@@ -1,8 +1,12 @@
 const isbnInput = document.getElementById("isbn");
 const startButton = document.getElementById("start-scanner");
 const stopButton = document.getElementById("stop-scanner");
+const lookupButton = document.getElementById("lookup-book");
 const statusText = document.getElementById("scanner-status");
 const video = document.getElementById("barcode-preview");
+const titleInput = document.getElementById("title");
+const datePublishedInput = document.getElementById("date_published");
+const coverPreview = document.getElementById("cover-preview");
 
 let scannerStream = null;
 let scannerActive = false;
@@ -13,6 +17,52 @@ function setScannerStatus(message) {
 
 function normalizeIsbn(value) {
     return value.replace(/[^0-9X]/gi, "");
+}
+
+function fillBookForm(book) {
+    if (!book) {
+        return;
+    }
+
+    if (book.title) {
+        titleInput.value = book.title;
+    }
+
+    if (book.publish_date) {
+        datePublishedInput.value = book.publish_date;
+    }
+
+    if (book.cover_url) {
+        coverPreview.src = book.cover_url;
+        coverPreview.hidden = false;
+    }
+}
+
+async function lookupBookByIsbn() {
+    const isbn = normalizeIsbn(isbnInput.value);
+    if (!isbn) {
+        setScannerStatus("Bitte zuerst eine ISBN scannen oder eingeben.");
+        return;
+    }
+
+    try {
+        setScannerStatus("Buchdaten werden gesucht.");
+        const response = await fetch(`/api/books/lookup?isbn=${encodeURIComponent(isbn)}`);
+        const result = await response.json();
+
+        if (result.book) {
+            fillBookForm(result.book);
+        }
+
+        if (result.error) {
+            setScannerStatus(result.error);
+            return;
+        }
+
+        setScannerStatus("Buchdaten gefunden und Formular ergänzt.");
+    } catch (error) {
+        setScannerStatus("Buchdaten konnten nicht geladen werden.");
+    }
 }
 
 function stopScanner() {
@@ -44,6 +94,7 @@ async function scanFrame(detector) {
             isbnInput.value = normalizeIsbn(barcode.rawValue);
             setScannerStatus(`ISBN erkannt: ${isbnInput.value}`);
             stopScanner();
+            lookupBookByIsbn();
             return;
         }
     } catch (error) {
@@ -85,6 +136,7 @@ async function startScanner() {
 }
 
 startButton.addEventListener("click", startScanner);
+lookupButton.addEventListener("click", lookupBookByIsbn);
 stopButton.addEventListener("click", () => {
     stopScanner();
     setScannerStatus("Scanner gestoppt.");

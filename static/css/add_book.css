@@ -51,3 +51,8 @@ p {
     background: #eef2ff;
     border-left-color: #7c3aed;
 }
+
+#cover-preview {
+    width: 120px;
+    border-radius: 4px;
+}

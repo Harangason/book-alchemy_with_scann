@@ -64,6 +64,13 @@ If you create a separate virtual environment in this folder, use that environmen
 - `/author/<author_id>/delete` — delete an author and their books with `POST`.
 - `/recommendation` — generate a recommendation through RapidAPI.
 
+## ISBN Lookup
+
+- Python lookup functions live in `book_lookup.py`.
+- `/api/books/lookup?isbn=...` validates the scanned barcode/ISBN.
+- The lookup fetches book metadata from OpenLibrary and returns title, publish date, authors, and cover URL as JSON.
+- The add-book page can fill title/date fields and show a cover preview after scanning or manual ISBN entry.
+
 ## Barcode Scanning
 
 - The scanner is implemented in `static/js/barcode_scanner.js`.
@@ -101,3 +108,4 @@ Do not commit API keys.
 - The local SQLite database is stored at `data/library.sqlite`.
 - Runtime files, cache files, local databases, and env files are ignored by Git.
 - This repository is the scan-enabled version. The non-camera version remains in `book-alchemy-de`.
+

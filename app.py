@@ -1,7 +1,7 @@
 from datetime import date
 import json
 
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
 import os
 from sqlalchemy import inspect
 from sqlalchemy.sql import text
@@ -10,6 +10,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from data.data_models import Author, Book, db
+from book_lookup import get_cover_url_for_isbn, lookup_book_by_isbn
 
 
 app = Flask(__name__)
@@ -76,7 +77,7 @@ def parse_optional_date(value):
 
 
 def get_cover_url(isbn):
-    return f"https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg"
+    return get_cover_url_for_isbn(isbn)
 
 
 def parse_optional_rating(value):
@@ -299,6 +300,19 @@ def add_author():
         success_message = f"Author '{author.name}' was added successfully."
 
     return render_template('add_author.html', success_message=success_message)
+
+
+@app.route('/api/books/lookup')
+def lookup_book():
+    isbn = request.args.get('isbn', '')
+    book_data, error_message = lookup_book_by_isbn(isbn)
+    status_code = 404 if book_data and error_message else 400 if error_message else 200
+
+    return jsonify({
+        'book': book_data,
+        'error': error_message,
+    }), status_code
+
 
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
