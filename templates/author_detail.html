@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ author.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
+</head>
+<body>
+    <h1>{{ author.name }}</h1>
+    <p>Born: {{ author.birth_date if author.birth_date else 'Unknown' }}</p>
+    <p>Died: {{ author.date_of_death if author.date_of_death else 'N/A' }}</p>
+
+    <h2>Books</h2>
+    {% if books %}
+        <ul>
+            {% for book in books %}
+                <li>
+                    <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
+                    — Rating: {{ book.rating if book.rating else 'Not rated' }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No books for this author.</p>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('delete_author', author_id=author.id) }}">
+        <button type="submit">Autor löschen</button>
+    </form>
+    <a href="{{ url_for('home') }}">Back to library</a>
+</body>
+</html>

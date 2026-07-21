@@ -1,0 +1,46 @@
+body {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px;
+    font-family: Arial, sans-serif;
+    background: #fff7ed;
+    color: #292524;
+}
+
+h1 {
+    margin-bottom: 24px;
+}
+
+form {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 24px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+input,
+select,
+button {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+button {
+    cursor: pointer;
+    border: 0;
+    background: #ea580c;
+    color: white;
+}
+
+p {
+    padding: 12px;
+    background: #dcfce7;
+    border-left: 4px solid #16a34a;
+}
+
+a {
+    color: #9a3412;
+}

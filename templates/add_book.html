@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Add Book</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_book.css') }}">
+</head>
+<body>
+    <h1>Add Book</h1>
+
+    {% if success_message %}
+        <p>{{ success_message }}</p>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('add_book') }}">
+        <label for="isbn">ISBN</label>
+        <input type="text" id="isbn" name="isbn" maxlength="13" required>
+
+        <button type="button" id="start-scanner">Barcode scannen</button>
+        <button type="button" id="stop-scanner" hidden>Scanner stoppen</button>
+        <p id="scanner-status">Scanner bereit. Funktioniert auf Smartphone/Tablet über HTTPS oder localhost.</p>
+        <video id="barcode-preview" hidden playsinline></video>
+
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="date_published">Date published</label>
+        <input type="date" id="date_published" name="date_published">
+
+        <label for="rating">Rating</label>
+        <input type="number" id="rating" name="rating" min="1" max="10">
+
+        <label for="author_id">Author</label>
+        <select id="author_id" name="author_id" required>
+            {% for author in authors %}
+                <option value="{{ author.id }}">{{ author.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Add book</button>
+    </form>
+
+    <script src="{{ url_for('static', filename='js/barcode_scanner.js') }}"></script>
+</body>
+</html>

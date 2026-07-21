@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Book Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+<body>
+    <h1>Book Library</h1>
+
+    <nav>
+        <a href="{{ url_for('add_author') }}">Add author</a>
+        <a href="{{ url_for('add_book') }}">Add book</a>
+        <a href="{{ url_for('recommendation') }}">Book recommendation</a>
+    </nav>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="get" action="{{ url_for('home') }}">
+        <label for="q">Search books</label>
+        <input type="text" id="q" name="q" value="{{ search_query }}" placeholder="Title or phrase">
+        <input type="hidden" name="sort" value="{{ sort_by }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <form method="get" action="{{ url_for('home') }}">
+        <label for="sort">Sort books by</label>
+        <input type="hidden" name="q" value="{{ search_query }}">
+        <select id="sort" name="sort">
+            <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Title</option>
+            <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
+        </select>
+        <button type="submit">Sort</button>
+    </form>
+
+    {% if books %}
+        <ul>
+            {% for book in books %}
+                <li>
+                    <img src="{{ book.cover_url }}" alt="Cover for {{ book.title }}" width="100">
+                    <h2><a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a></h2>
+                    <p>
+                        Author:
+                        {% if book.author_id %}
+                            <a href="{{ url_for('author_detail', author_id=book.author_id) }}">{{ book.author_name }}</a>
+                        {% else %}
+                            {{ book.author_name }}
+                        {% endif %}
+                    </p>
+                    <p>Rating: {{ book.rating if book.rating else 'Not rated' }}</p>
+                    {% if book.author_id %}
+                        <form method="post" action="{{ url_for('delete_author', author_id=book.author_id) }}">
+                            <button type="submit">Autor löschen</button>
+                        </form>
+                    {% endif %}
+                    <a href="{{ url_for('edit_book', book_id=book.id) }}">Buch bearbeiten</a>
+                    <form method="post" action="{{ url_for('delete_book', book_id=book.id) }}">
+                        <button type="submit">Buch löschen</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {% if search_query %}
+            <p>No books found for "{{ search_query }}".</p>
+        {% else %}
+            <p>No books found.</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

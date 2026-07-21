@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Book Recommendation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
+</head>
+<body>
+    <h1>Book Recommendation</h1>
+
+    <p>
+        Generate a recommendation from the books in your library.
+        Ratings are included when available.
+    </p>
+
+    <form method="post" action="{{ url_for('recommendation') }}">
+        <button type="submit">Generate recommendation</button>
+    </form>
+
+    {% if recommendation_text %}
+        <h2>Recommendation</h2>
+        <pre>{{ recommendation_text }}</pre>
+    {% endif %}
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+
+    <a href="{{ url_for('home') }}">Back to library</a>
+</body>
+</html>
